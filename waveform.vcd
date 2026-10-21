@@ -1,0 +1,121 @@
+$date
+	Wed Oct 21 09:56:25 2026
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1ps
+$end
+$scope module tb_threshold_alarm $end
+$var wire 1 ! in_hyst $end
+$var wire 1 " alarm_out $end
+$var reg 1 # clk $end
+$var reg 1 $ rst_n $end
+$var reg 1 % thresh_sel $end
+$var reg 8 & ui_in [7:0] $end
+$var reg 8 ' uio_in [7:0] $end
+$scope module uut $end
+$var wire 1 # clk $end
+$var wire 1 $ rst_n $end
+$var wire 1 % thresh_sel $end
+$var wire 8 ( ui_in [7:0] $end
+$var wire 8 ) uio_in [7:0] $end
+$var reg 1 " alarm_out $end
+$var reg 1 ! in_hyst $end
+$var reg 8 * th_high [7:0] $end
+$var reg 8 + th_low [7:0] $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+$comment Show the parameter values. $end
+$dumpall
+$end
+#0
+$dumpvars
+b110010 +
+b10010110 *
+b0 )
+b0 (
+b0 '
+b0 &
+0%
+0$
+0#
+0"
+0!
+$end
+#5000
+1#
+#10000
+0#
+#15000
+1#
+#20000
+0#
+1$
+#25000
+b0 +
+1#
+#30000
+0#
+b110010 '
+b110010 )
+#35000
+b110010 +
+1!
+1#
+#40000
+0#
+b10010110 '
+b10010110 )
+1%
+#45000
+0!
+1#
+#50000
+0#
+b11110 &
+b11110 (
+#55000
+1#
+#60000
+0#
+#65000
+1#
+#70000
+0#
+b10100000 &
+b10100000 (
+#75000
+1"
+1#
+#80000
+0#
+#85000
+1#
+#90000
+0#
+b1100100 &
+b1100100 (
+#95000
+1!
+1#
+#100000
+0#
+#105000
+1#
+#110000
+0#
+b101000 &
+b101000 (
+#115000
+0!
+0"
+1#
+#120000
+0#
+#125000
+1#
+#130000
+0#
