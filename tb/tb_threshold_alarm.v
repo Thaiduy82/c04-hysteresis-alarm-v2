@@ -40,14 +40,18 @@ module tb_threshold_alarm();
         thresh_sel = 0; uio_in = 8'd50;  #10;
         thresh_sel = 1; uio_in = 8'd150; #10;
 
-        // 1. Tăng mẫu vượt ngưỡng trên (160 > 150) -> Cảnh báo bật (alarm_out = 1)
+        $display("--- Bat dau kiem tra vung trễ (Hysteresis Alarm) ---");
+
+        // 1. Đưa giá trị thấp hơn ngưỡng dưới để thiết lập trạng thái ban đầu ổn định (alarm = 0)
         ui_in = 8'd30;  #20;
+
+        // 2. Tăng mẫu vượt ngưỡng trên (160 > 150) -> Cảnh báo bật (alarm_out = 1, in_hyst = 0)
         ui_in = 8'd160; #20;
 
-        // 2. Giảm vào vùng trễ (100) -> Cảnh báo duy trì giữ nguyên (alarm_out = 1)
+        // 3. Giảm vào vùng trễ (100 nằm giữa 50 và 150) -> Cảnh báo duy trì giữ nguyên (alarm_out = 1, in_hyst = 1)
         ui_in = 8'd100; #20;
 
-        // 3. Giảm dưới ngưỡng dưới (40 < 50) -> Cảnh báo tắt (alarm_out = 0)
+        // 4. Giảm dưới ngưỡng dưới (40 < 50) -> Cảnh báo tắt (alarm_out = 0, in_hyst = 0)
         ui_in = 8'd40;  #20;
 
         #20;
