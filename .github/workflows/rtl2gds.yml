@@ -76,6 +76,11 @@ jobs:
             extra-trusted-public-keys = nix-cache.fossi-foundation.org:3+K59iFwXqKsL7BNu6Guy0v+uTlwsxYQxjspXzqLYQs=
             extra-experimental-features = nix-command flakes
 
+      - name: Thiet lap Nix channel cho pkgs
+        run: |
+          nix-channel --add https://channels.nixos.org/nixpkgs-unstable nixpkgs
+          nix-channel --update
+
       - name: Lay LibreLane
         run: git clone --depth 1 https://github.com/librelane/librelane ~/librelane
 
