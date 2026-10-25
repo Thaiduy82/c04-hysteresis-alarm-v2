@@ -87,7 +87,7 @@ jobs:
       - name: Chay flow
         run: |
           cd ~/librelane
-          nix-shell --run "cd '$GITHUB_WORKSPACE' && librelane --version && librelane '$CONFIG'"
+          nix-shell --command "python3 -m librelane '$GITHUB_WORKSPACE/$CONFIG'"
 
       - name: Kiem SAN PHAM, khong chi kiem ma thoat
         run: |
