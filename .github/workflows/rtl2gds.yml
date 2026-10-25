@@ -86,8 +86,9 @@ jobs:
 
       - name: Chay flow
         run: |
+          # Tro truc tiep ve thu muc chua project va goi python module cua librelane
           cd ~/librelane
-          nix-shell --command "python3 -m librelane '$GITHUB_WORKSPACE/$CONFIG'"
+          nix-shell --run "cd '$GITHUB_WORKSPACE' && python3 -m librelane '$CONFIG'"
 
       - name: Kiem SAN PHAM, khong chi kiem ma thoat
         run: |
