@@ -86,12 +86,13 @@ jobs:
 
       - name: Chay flow
         run: |
-          # Tro truc tiep ve thu muc chua project va goi python module cua librelane
           cd ~/librelane
-          nix-shell --run "cd '$GITHUB_WORKSPACE' && python3 -m librelane '$CONFIG'"
+          # Su dung duong dan tuyet doi den config.json de khong bao giờ bi sai thu muc
+          nix-shell --run "python3 -m librelane '$GITHUB_WORKSPACE/$CONFIG'"
 
       - name: Kiem SAN PHAM, khong chi kiem ma thoat
         run: |
+          cd '$GITHUB_WORKSPACE'
           GDS=$(find . -name "*.gds" | head -1)
           MJ=$(find . -name "metrics.json" | head -1)
           if [ -z "$GDS" ]; then echo "::error::Khong sinh duoc file GDS"; exit 1; fi
