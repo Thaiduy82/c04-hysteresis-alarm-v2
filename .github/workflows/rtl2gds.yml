@@ -1,7 +1,4 @@
-# =====================================================================
-#  EEE703128 - RTL-to-GDSII tren GitHub Actions (LibreLane Flow)
-# =====================================================================
-name: RTL to GDSII
+name: OpenLane / LibreLane RTL-to-GDSII Flow
 
 on:
   push:
@@ -11,11 +8,9 @@ on:
   workflow_dispatch:
 
 env:
-  # ---- Cau hinh cho de tai C04 Hysteresis Alarm -------------------
   MA_DE: C04
   DESIGN_NAME: threshold_alarm_hysteresis
   CONFIG: config.json
-  # -----------------------------------------------------------------
 
 jobs:
   mo-phong:
@@ -29,27 +24,22 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y iverilog
 
-      - name: Ghi lai phien ban cong cu
-        run: |
-          iverilog -V | head -1 | tee tool_versions.txt
-          echo "Ngay chay: $(date -Is)" | tee -a tool_versions.txt
-
       - name: Bien dich va chay testbench
         run: |
           iverilog -g2012 -o sim.vvp rtl/*.v tb/*.v
           vvp sim.vvp | tee simulation.log
 
-      - name: Kiem log - phai co PASS va khong duoc co loi
+      - name: Kiem tra log mo phong (phai co PASS)
         run: |
           if grep -qiE "FATAL|mismatch|\bFAIL\b" simulation.log; then
-            echo "::error::Testbench bao loi - xem simulation.log"
+            echo "::error::Testbench bao loi!"
             exit 1
           fi
           if ! grep -qi "PASS" simulation.log; then
-            echo "::error::Khong thay dong PASS nao trong log"
+            echo "::error::Khong tim thay dong PASS trong log mo phong!"
             exit 1
           fi
-          echo "Mo phong dat."
+          echo "Mo phong thanh cong!"
 
       - uses: actions/upload-artifact@v4
         if: always()
@@ -57,9 +47,7 @@ jobs:
           name: mo-phong-${{ env.MA_DE }}
           path: |
             simulation.log
-            tool_versions.txt
             *.vcd
-          if-no-files-found: warn
 
   rtl2gds:
     name: 2 - RTL-to-GDSII (LibreLane + sky130A)
@@ -68,7 +56,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Cai Nix kem bo nho dem nhi phan cua FOSSi
+      - name: Cai Nix kem bo nho dem nhi phan FOSSi
         uses: cachix/install-nix-action@v27
         with:
           extra_nix_config: |
@@ -76,7 +64,7 @@ jobs:
             extra-trusted-public-keys = nix-cache.fossi-foundation.org:3+K59iFwXqKsL7BNu6Guy0v+uTlwsxYQxjspXzqLYQs=
             extra-experimental-features = nix-command flakes
 
-      - name: Thiet lap Nix channel cho pkgs
+      - name: Thiet lap Nix channel
         run: |
           nix-channel --add https://channels.nixos.org/nixpkgs-unstable nixpkgs
           nix-channel --update
@@ -84,34 +72,31 @@ jobs:
       - name: Lay LibreLane
         run: git clone --depth 1 https://github.com/librelane/librelane ~/librelane
 
-      - name: Chay flow
+      - name: Chay LibreLane Flow
         run: |
-          # Copy config va ma nguồn RTL vao truc tiep thu muc librelane de tranh loi duong dan
           cp config.json ~/librelane/
           cp -r rtl ~/librelane/
-          
           cd ~/librelane
           nix-shell --run "python3 -m librelane config.json"
 
-      - name: Kiem SAN PHAM, khong chi kiem ma thoat
+      - name: Kiem tra san pham GDS va ghi nhan Metrics
         run: |
           cd ~/librelane
           GDS=$(find . -name "*.gds" | head -1)
           MJ=$(find . -name "metrics.json" | head -1)
           if [ -z "$GDS" ]; then echo "::error::Khong sinh duoc file GDS"; exit 1; fi
-          if [ -z "$MJ" ];  then echo "::error::Khong co metrics.json";   exit 1; fi
+          if [ -z "$MJ" ];  then echo "::error::Khong tim thay file metrics.json"; exit 1; fi
           
-          # Copy nguoc lai file ket qua ve workspace chinh de upload artifact chuan xac
-          cp -r runs '$GITHUB_WORKSPACE/'
-          cp metrics.json '$GITHUB_WORKSPACE/'
-          find . -name "*.gds" -exec cp {} '$GITHUB_WORKSPACE/' \;
+          cp -r runs "$GITHUB_WORKSPACE/"
+          cp "$MJ" "$GITHUB_WORKSPACE/metrics.json"
+          find . -name "*.gds" -exec cp {} "$GITHUB_WORKSPACE/" \;
 
-          cd '$GITHUB_WORKSPACE'
-          echo "GDS: $GDS"
-          echo "--- Chi so chinh, chep vao bao cao ---"
-          python3 .github/workflows/doc_metrics.py "$MJ"
+          cd "$GITHUB_WORKSPACE"
+          echo "GDS File Path: $GDS"
+          python3 .github/doc_metrics.py metrics.json
 
-      - uses: actions/upload-artifact@v4
+      - name: Upload GDSII Artifacts
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: rtl2gds-${{ env.MA_DE }}
@@ -120,4 +105,3 @@ jobs:
             **/runs/**/*.log
             **/metrics.json
             **/*.gds
-          if-no-files-found: warn
