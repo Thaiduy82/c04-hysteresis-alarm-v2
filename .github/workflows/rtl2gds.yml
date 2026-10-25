@@ -86,17 +86,27 @@ jobs:
 
       - name: Chay flow
         run: |
+          # Copy config va ma nguồn RTL vao truc tiep thu muc librelane de tranh loi duong dan
+          cp config.json ~/librelane/
+          cp -r rtl ~/librelane/
+          
           cd ~/librelane
-          # Su dung duong dan tuyet doi den config.json de khong bao giờ bi sai thu muc
-          nix-shell --run "python3 -m librelane '$GITHUB_WORKSPACE/$CONFIG'"
+          nix-shell --run "python3 -m librelane config.json"
 
       - name: Kiem SAN PHAM, khong chi kiem ma thoat
         run: |
-          cd '$GITHUB_WORKSPACE'
+          cd ~/librelane
           GDS=$(find . -name "*.gds" | head -1)
           MJ=$(find . -name "metrics.json" | head -1)
           if [ -z "$GDS" ]; then echo "::error::Khong sinh duoc file GDS"; exit 1; fi
           if [ -z "$MJ" ];  then echo "::error::Khong co metrics.json";   exit 1; fi
+          
+          # Copy nguoc lai file ket qua ve workspace chinh de upload artifact chuan xac
+          cp -r runs '$GITHUB_WORKSPACE/'
+          cp metrics.json '$GITHUB_WORKSPACE/'
+          find . -name "*.gds" -exec cp {} '$GITHUB_WORKSPACE/' \;
+
+          cd '$GITHUB_WORKSPACE'
           echo "GDS: $GDS"
           echo "--- Chi so chinh, chep vao bao cao ---"
           python3 .github/workflows/doc_metrics.py "$MJ"
