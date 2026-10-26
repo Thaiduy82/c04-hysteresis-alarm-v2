@@ -1,5 +1,4 @@
 ### 2. File `03_ARCHITECTURE/fsm.md`
-```markdown
 # C04 · Máy trạng thái (FSM)
 
 Khối C04 hiện thực **FSM kiểu Moore 2 trạng thái** sử dụng duy nhất **1 bit bộ nhớ**.

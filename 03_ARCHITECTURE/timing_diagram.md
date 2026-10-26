@@ -1,5 +1,4 @@
 ### 4. File `03_ARCHITECTURE/timing_diagram.md`
-```markdown
 # C04 · Giản đồ thời gian (Timing Diagram)
 
 ---

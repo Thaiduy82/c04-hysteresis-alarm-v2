@@ -1,5 +1,4 @@
 ### 3. File `03_ARCHITECTURE/system_diagram.md`
-```markdown
 # C04 · Sơ đồ hệ thống (System Diagram)
 
 ---
